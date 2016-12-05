@@ -58,4 +58,34 @@ def get_hbonds(crystal_object):
         x3 = x2.replace(")","")
         h_bonds.append(x3.split("-"))
     return h_bonds
+
+def get_functional_groups_in_structure(crystal_object):
+    """Searches through the crystal structure for every substructure defined by a smarts-string in smarts-pattern.txt. Returns
+    the number of each functional groups detected, a dictionary mapping each atom label to a smarts string, and a list of the 
+    heavy atoms found in the crystal structure"""
+    
+    smarts_tuples = get_smarts_tuples()
+    atoms_to_functional_group = {}
+    fgs_in_mol = []
+    atoms_in_smarts = []
+    for smarts in smarts_tuples:
+        #substructure search with smarts string
+        smartsSubstructureSearch = search.SMARTSSubstructure(str(s_tuple.smarts))
+        searcher = search.SubstructureSearch()
+        searcher.add_substructure(smartsSubstructureSearch)
+        hit = searcher.search(crystal_object)
+        if hit:
+            # get the atom labels for each instance of the smarts hit
+            for h in hit:
+                atoms_in_each_smarts = s_tuple.heavy_atoms.split(",")
+                atoms_in_smarts.extend(atoms_in_each_smarts)
+                fgs_in_mol.append(s_tuple.functional_Group)
+                atom_list = h.match_atoms()
+                #get rid of ccdc labels
+                for atom in atom_list:
+                    x = str(atom).replace("Atom","")
+                    x1 = x.replace("(","")
+                    x2 = x1.replace(")","")
+                    atoms_to_functional_group.update({x2: s_tuple.functional_Group})            
+    return dict(Counter(fgs_in_mol)), atoms_to_functional_group, atoms_in_smarts
   
