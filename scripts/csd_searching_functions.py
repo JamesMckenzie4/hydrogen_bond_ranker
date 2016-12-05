@@ -161,4 +161,24 @@ def identify_hbonds(hbond_list, atoms_to_smarts_dictionary):
         h_bond_dict.update({keys[i]: vals[i]})
     return h_bond_dict
 
-  
+def get_unused_acceptors(functional_group_numbers, Hbond_list):
+    """compares a list of functional groups with a list of H-bonds to find out which acceptors have formed H-bonds
+    and which have not"""
+    
+    unused_acceptors = []
+    used_acceptors = []
+    acceptors = [i.functional_Group for i in get_smarts_tuples() if i.Type != "Donor"]
+    for functional_group in functional_group_numbers.keys():
+        if functional_group not in acceptors:
+            continue
+        functional_group_is_used = 0
+        for hbond in Hbond_list.keys():
+            #print hbond
+            if functional_group == hbond[1]:
+                functional_group_is_used = 1
+        #print functional_group_is_used
+        if functional_group_is_used == 0:
+            unused_acceptors.append(functional_group)
+        else:
+            used_acceptors.append(functional_group)
+    return used_acceptors, unused_acceptors
