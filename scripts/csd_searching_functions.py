@@ -44,4 +44,18 @@ def remove_intra(crystal_object):
     if len(hbonds) > 0:
         return None
 
+def get_hbonds(crystal_object):
+    """get the atom labels of the atoms involved in every H-bond in the crystal and return as a list. This functional can be modified 
+    to change the definition of a H-bond, using the distance_range and angle_tolerance params, for future tests""" 
+    
+    h_bonds = []
+    hbonds = crystal_object.hbonds(intermolecular="inter", distance_range=(-5.0, 0.0), angle_tolerance=110.00)
+    #remove the ccdc label stuff
+    for bond in hbonds:
+        x = str(bond).replace("HBond(Atom(", "")
+        x1 = x.replace("Atom","")
+        x2 = x1.replace("(","")
+        x3 = x2.replace(")","")
+        h_bonds.append(x3.split("-"))
+    return h_bonds
   
