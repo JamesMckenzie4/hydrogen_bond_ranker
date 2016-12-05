@@ -1,4 +1,5 @@
 from ccdc.search import SMARTSSubstructure, SubstructureSearch
+from collections import Counter
 
 def searcher(smarts_string, number=100000):
     """search the CSD for structures containing a given smarts string. Uses sustructure_search.settings to specifiy search criteria.
@@ -88,4 +89,44 @@ def get_functional_groups_in_structure(crystal_object):
                     x2 = x1.replace(")","")
                     atoms_to_functional_group.update({x2: s_tuple.functional_Group})            
     return dict(Counter(fgs_in_mol)), atoms_to_functional_group, atoms_in_smarts
+
+def compare_heavy_atoms(crystal_object, atoms_in_smarts):
+    """a function to compare the number of heavy atoms expected by smarts hits with the number of heavy atoms
+    in the crystal structure, found using the API. If the numbers are the same return TRUE else False. The
+    function takes the crystal object and the atoms_in_smarts list retrived from get_functional_groups()"""
+    
+    #get atoms in crystal object
+    atoms = [str(atom.atomic_symbol) for atom in crystal_object.molecule.heavy_atoms]
+    atoms_dict = dict(Counter(atoms))
+    
+    #count heavy atoms found in smarts strings
+    oxygens = 0
+    nitrogens = 0
+    sulphurs = 0
+    for a in atoms_in_smarts:
+        if a == "None":
+            continue
+        if list(a)[0] == "O":
+            oxygens += int(list(a)[1])
+        if list(a)[0] == "N":
+            nitrogens += int(list(a)[1])
+        if list(a)[0] == "S":
+            sulphurs += int(list(a)[1])
+    #compare atoms in the crystal with atoms from the smarts strings. If they don't match return false
+    try:
+        if atoms_dict["O"] != oxygens:
+            return False, "number of oxygens = " + repr(oxygens) + " expected " + repr(atoms_dict["O"])
+    except KeyError:
+        pass
+    try:
+        if atoms_dict["N"] != nitrogens:
+            return False, "number of nitrogens = " + repr(nitrogens) + " expected " + repr(atoms_dict["N"])
+    except KeyError:
+        pass
+    try:
+        if atoms_dict["S"] != sulphurs:
+            return False, "number of sulphurs = " + repr(sulphurs) +  " expected " + repr(atoms_dict["S"])
+    except KeyError:
+        pass
+    return True
   
