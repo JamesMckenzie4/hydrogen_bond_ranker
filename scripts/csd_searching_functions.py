@@ -129,4 +129,36 @@ def compare_heavy_atoms(crystal_object, atoms_in_smarts):
     except KeyError:
         pass
     return True
+
+def identify_hbonds(hbond_list, atoms_to_smarts_dictionary):
+    """takes the list of H-bonds in the crystal structure and the dictionary of atoms to smarts strings and works
+    out which functional groups are involved in each hbond. Returns a list of tuples of structure 
+    -[(donor functional group, acceptor functional group)]"""
+
+    hbond_tuples = []
+    for hbond in hbond_list:
+        smarts_in_mol = []
+        for atom in hbond:
+            if "H" in list(atom):
+                donor_smarts = atoms_to_smarts_dictionary[atom]
+            else:
+                smarts_in_mol.append(atoms_to_smarts_dictionary[atom])
+
+        if smarts_in_mol.count(donor_smarts) == 2:
+            #then every atom is from the same functional group
+            hbond_tuples.append((donor_smarts,donor_smarts))
+        else:
+            #find the smarts of the functional group which is not the donor
+            for smarts in smarts_in_mol:
+                if smarts == donor_smarts:
+                    continue
+                hbond_tuples.append((donor_smarts,smarts))
+
+    keys = Counter(hbond_tuples).keys()
+    vals = Counter(hbond_tuples).values()
+    h_bond_dict = {}
+    for i in range(len(keys)):
+        h_bond_dict.update({keys[i]: vals[i]})
+    return h_bond_dict
+
   
