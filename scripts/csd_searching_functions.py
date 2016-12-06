@@ -44,6 +44,19 @@ def remove_intra(crystal_object):
     hbonds = crystal_object.hbonds(intermolecular="intra", distance_range=(-5.0, 1.0), angle_tolerance=100.0, path_length_range=(3, 999))
     if len(hbonds) > 0:
         return None
+    
+def add_missing_H_atoms(crystal_object):
+    """adds missing hydrogen atoms to crystal structures"""
+
+    mol = crystal.molecule
+    try:
+        mol.add_hydrogens("missing")
+    except RuntimeError:
+        return None
+    mol2 = crystal.molecule
+    mol2.normalise_labels()
+    crystal.molecule = mol2
+    return crystal
 
 def get_hbonds(crystal_object):
     """get the atom labels of the atoms involved in every H-bond in the crystal and return as a list. This functional can be modified 
