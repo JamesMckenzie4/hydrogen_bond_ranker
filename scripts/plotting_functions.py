@@ -1,6 +1,6 @@
 from path_definition import scripts_dir
 
-def plot_tracked_ratings_aug(list_of_fg, elo_tracking_dict, glicko_tracking_dict, skill_tracking_dict, name, key_location):
+def plot_tracked_ratings(list_of_fg, elo_tracking_dict, glicko_tracking_dict, skill_tracking_dict, name, key_location):
     """function to track the ratings of a functional group. Function takes a list of functional groups for which the trackers
     are to be plotted for, the elo, glicko and trueskill tracking dictionaries from calculate_and_track_ratings(), a name
     for which the .png will be called, and the key location, 1 = top right"""
