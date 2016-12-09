@@ -63,6 +63,5 @@ def plot_tracked_ratings(list_of_fg_to_track, elo_tracking_dict, glicko_tracking
         ax3.legend(handles, labels, loc = key_location)
         
         os.chdir(scripts_dir)
+        os.chdir("../pictures")
         plt.savefig(name + ".png", bbox_inches="tight")
-        
-
