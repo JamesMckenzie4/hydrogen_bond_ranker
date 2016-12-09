@@ -66,5 +66,5 @@ def plot_tracked_ratings(list_of_fg, elo_tracking_dict, glicko_tracking_dict, sk
       
         #change directory to pictures
         os.chdir(scripts_dir)
-        os.chdir("../pictures
+        os.chdir("../pictures")
         plt.savefig(name + ".png", bbox_inches="tight")
